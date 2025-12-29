@@ -1,11 +1,16 @@
 import React from "react";
-import SignUp from "./components/SignUp";
-
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import UserLayout from "./components/Layout/UserLayout";
 const App = () => {
   return (
-    <div>
-      <SignUp />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<UserLayout />}>
+          {/* User Layout */}
+        </Route>
+        <Route>{/* Admin layout */}</Route>
+      </Routes>
+    </BrowserRouter>
   );
 };
 
