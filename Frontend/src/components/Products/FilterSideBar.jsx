@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 
 const FilterSideBar = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  // Simulating URL params with state for demonstration
+  const [urlParams, setUrlParams] = useState(new URLSearchParams());
   const [priceRange, setPriceRange] = useState([0, 100]);
   const categories = ["Top Wear", "Bottom Wear"];
   const colors = [
@@ -38,8 +38,8 @@ const FilterSideBar = () => {
   ];
   const genders = ["Men", "Women"];
   const [filter, setFilter] = useState({
-    categeory: "",
-    genders: "",
+    category: "",
+    gender: "",
     color: "",
     size: [],
     material: [],
@@ -47,81 +47,101 @@ const FilterSideBar = () => {
     minPrice: 0,
     maxPrice: 100,
   });
+
   const handleFilterChange = (e) => {
     const { name, value, checked, type } = e.target;
     let newFilters = { ...filter };
+    
     if (type === "checkbox") {
       if (checked) {
         newFilters[name] = [...(newFilters[name] || []), value];
       } else {
         newFilters[name] = newFilters[name].filter((item) => item !== value);
       }
+    } else if (type === "range") {
+      newFilters.maxPrice = value;
+      setPriceRange([0, value]);
     } else {
       newFilters[name] = value;
     }
+    
     setFilter(newFilters);
+    updateURLParams(newFilters);
     console.log(newFilters);
   };
 
-  const updateURLParams = (newFilters) =>{
-    const params = new URLSearchParams()
-    Object.keys(newFilters).forEach((key)) =>{
-      if(Array.isArray(newFilters[key]) && newFilters[key].length > 0){
-        params.append
+  const updateURLParams = (newFilters) => {
+    const params = new URLSearchParams();
+    
+    Object.keys(newFilters).forEach((key) => {
+      if (Array.isArray(newFilters[key]) && newFilters[key].length > 0) {
+        params.append(key, newFilters[key].join(","));
+      } else if (newFilters[key] && newFilters[key] !== 0) {
+        params.append(key, newFilters[key]);
       }
-    }
-  }
+    });
+    
+    setUrlParams(params);
+    // Update browser URL without page reload
+    window.history.pushState({}, '', `?${params.toString()}`);
+  };
 
   useEffect(() => {
-    const params = Object.fromEntries([...searchParams]);
+    // Read URL params on component mount
+    const params = new URLSearchParams(window.location.search);
+    const paramsObj = Object.fromEntries([...params]);
 
     setFilter({
-      categeory: params.categeory || "",
-      gender: params.gender || "",
-      color: params.color || "",
-      size: params.size ? params.size.split(",") : [],
-      material: params.material ? params.material.split(",") : [],
-      brand: params.brand ? params.brand.split(",") : [],
-      minPrice: params.minPrice || 0,
-      maxPrice: params.maxPrice || 100,
+      category: paramsObj.category || "",
+      gender: paramsObj.gender || "",
+      color: paramsObj.color || "",
+      size: paramsObj.size ? paramsObj.size.split(",") : [],
+      material: paramsObj.material ? paramsObj.material.split(",") : [],
+      brand: paramsObj.brand ? paramsObj.brand.split(",") : [],
+      minPrice: paramsObj.minPrice || 0,
+      maxPrice: paramsObj.maxPrice || 100,
     });
-    setPriceRange([0, params.maxPrice || 100]);
-  }, [searchParams]);
+    setPriceRange([0, paramsObj.maxPrice || 100]);
+  }, []);
+
   return (
     <div className="p-4">
       <h3 className="text-xl font-medium text-gray-800 mb-4">Filter</h3>
-      {/* Categeory filter */}
-      <div className=" mb-6">
+      
+      {/* Category filter */}
+      <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-2">
-          Categeory
+          Category
         </label>
-        {categories.map((categeory) => (
-          <div key={categeory} className=" flex items-center mb-1">
+        {categories.map((category) => (
+          <div key={category} className="flex items-center mb-1">
             <input
               type="radio"
               onChange={handleFilterChange}
-              value={categeory}
-              name="categeory"
+              value={category}
+              name="category"
+              checked={filter.category === category}
               className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
-            <span className=" text-gray-700">{categeory}</span>
+            <span className="text-gray-700">{category}</span>
           </div>
         ))}
       </div>
 
       {/* Gender Filter */}
-      <div className=" mb-6">
+      <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-2">Gender</label>
         {genders.map((gender) => (
-          <div key={gender} className=" flex items-center mb-1">
+          <div key={gender} className="flex items-center mb-1">
             <input
               type="radio"
               name="gender"
               value={gender}
               onChange={handleFilterChange}
+              checked={filter.gender === gender}
               className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
-            <span className=" text-gray-700">{gender}</span>
+            <span className="text-gray-700">{gender}</span>
           </div>
         ))}
       </div>
@@ -135,8 +155,14 @@ const FilterSideBar = () => {
               key={color}
               name="color"
               value={color}
-              onClick={handleFilterChange}
-              className="w-8 h-8 rounded-full border border-gray-300 cursor-pointer transition hover:scale-105"
+              onClick={(e) => {
+                e.target.name = "color";
+                e.target.value = color;
+                handleFilterChange(e);
+              }}
+              className={`w-8 h-8 rounded-full border-2 cursor-pointer transition hover:scale-105 ${
+                filter.color === color ? "border-blue-500" : "border-gray-300"
+              }`}
               style={{ backgroundColor: color.toLowerCase() }}
             ></button>
           ))}
@@ -153,6 +179,7 @@ const FilterSideBar = () => {
               name="size"
               value={size}
               onChange={handleFilterChange}
+              checked={filter.size.includes(size)}
               className="h-4 w-4 mr-2 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
             <span className="text-gray-700">{size}</span>
@@ -172,6 +199,7 @@ const FilterSideBar = () => {
               value={material}
               onChange={handleFilterChange}
               name="material"
+              checked={filter.material.includes(material)}
               className="h-4 w-4 mr-2 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
             <span className="text-gray-700">{material}</span>
@@ -189,6 +217,7 @@ const FilterSideBar = () => {
               name="brand"
               value={brand}
               onChange={handleFilterChange}
+              checked={filter.brand.includes(brand)}
               className="h-4 w-4 mr-2 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
             <span className="text-gray-700">{brand}</span>
@@ -204,7 +233,7 @@ const FilterSideBar = () => {
         <input
           type="range"
           name="pricerange"
-          value={priceRange}
+          value={priceRange[1]}
           onChange={handleFilterChange}
           min={0}
           max={100}
