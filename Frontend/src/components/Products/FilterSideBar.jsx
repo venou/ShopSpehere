@@ -56,13 +56,21 @@ const FilterSideBar = () => {
       } else {
         newFilters[name] = newFilters[name].filter((item) => item !== value);
       }
-    }else{
-      newFilters[name] = name
+    } else {
+      newFilters[name] = value;
     }
-    setFilter(newFilters)
+    setFilter(newFilters);
     console.log(newFilters);
-    
   };
+
+  const updateURLParams = (newFilters) =>{
+    const params = new URLSearchParams()
+    Object.keys(newFilters).forEach((key)) =>{
+      if(Array.isArray(newFilters[key]) && newFilters[key].length > 0){
+        params.append
+      }
+    }
+  }
 
   useEffect(() => {
     const params = Object.fromEntries([...searchParams]);
