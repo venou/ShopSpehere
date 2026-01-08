@@ -23,7 +23,9 @@ const CollectionPage = () => {
     // Add event listener for event clicks
     document.addEventListener("mousedown", handleClickOutSide);
     // clean event listener
-    document.removeEventListener("mousedown", handleClickOutSide);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutSide);
+    };
   });
 
   useEffect(() => {

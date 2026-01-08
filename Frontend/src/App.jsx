@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import CollectionPage from "./pages/CollectionPage";
+import ProductsDetails from "./components/Products/ProductsDetails";
 const App = () => {
   return (
     <BrowserRouter>
@@ -21,6 +22,7 @@ const App = () => {
             path="/collection/:collection"
             element={<CollectionPage />}
           ></Route>
+          <Route path="/product/:id" element={<ProductsDetails />}></Route>
         </Route>
         <Route>{/* Admin layout */}</Route>
       </Routes>
