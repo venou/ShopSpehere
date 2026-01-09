@@ -8,6 +8,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import CollectionPage from "./pages/CollectionPage";
 import ProductsDetails from "./components/Products/ProductsDetails";
+import CheckOut from "./components/Cart/CheckOut";
 const App = () => {
   return (
     <BrowserRouter>
@@ -23,6 +24,7 @@ const App = () => {
             element={<CollectionPage />}
           ></Route>
           <Route path="/product/:id" element={<ProductsDetails />}></Route>
+          <Route path="/checkout" element={<CheckOut />}></Route>
         </Route>
         <Route>{/* Admin layout */}</Route>
       </Routes>
