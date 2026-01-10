@@ -25,7 +25,7 @@ const CheckOut = () => {
   const [checkOutId, setCheckOutId] = useState(null);
   const handleCreatecheckout = (e) => {
     e.preventDefault();
-    // setCheckOutId(123);
+    setCheckOutId(123);
   };
   const [shippingAddress, setShippingAddress] = useState({
     firstName: "",
