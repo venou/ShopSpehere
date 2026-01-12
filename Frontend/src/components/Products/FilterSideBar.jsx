@@ -51,7 +51,7 @@ const FilterSideBar = () => {
   const handleFilterChange = (e) => {
     const { name, value, checked, type } = e.target;
     let newFilters = { ...filter };
-    
+
     if (type === "checkbox") {
       if (checked) {
         newFilters[name] = [...(newFilters[name] || []), value];
@@ -64,7 +64,7 @@ const FilterSideBar = () => {
     } else {
       newFilters[name] = value;
     }
-    
+
     setFilter(newFilters);
     updateURLParams(newFilters);
     console.log(newFilters);
@@ -72,7 +72,7 @@ const FilterSideBar = () => {
 
   const updateURLParams = (newFilters) => {
     const params = new URLSearchParams();
-    
+
     Object.keys(newFilters).forEach((key) => {
       if (Array.isArray(newFilters[key]) && newFilters[key].length > 0) {
         params.append(key, newFilters[key].join(","));
@@ -80,10 +80,10 @@ const FilterSideBar = () => {
         params.append(key, newFilters[key]);
       }
     });
-    
+
     setUrlParams(params);
     // Update browser URL without page reload
-    window.history.pushState({}, '', `?${params.toString()}`);
+    window.history.pushState({}, "", `?${params.toString()}`);
   };
 
   useEffect(() => {
@@ -107,12 +107,10 @@ const FilterSideBar = () => {
   return (
     <div className="p-4">
       <h3 className="text-xl font-medium text-gray-800 mb-4">Filter</h3>
-      
+
       {/* Category filter */}
       <div className="mb-6">
-        <label className="block text-gray-600 font-medium mb-2">
-          Category
-        </label>
+        <label className="block text-gray-600 font-medium mb-2">Category</label>
         {categories.map((category) => (
           <div key={category} className="flex items-center mb-1">
             <input
@@ -240,7 +238,7 @@ const FilterSideBar = () => {
           className="bg-gray-300 rounded-lg w-full h-2 appearance-none cursor-pointer"
         />
         <div className="flex justify-between text-gray-600 mt-2">
-          <span>$0</span>
+          <span>₹0</span>
           <span>${priceRange[1]}</span>
         </div>
       </div>

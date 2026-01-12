@@ -39,7 +39,7 @@ const CheckOut = () => {
 
   const handlePaymentSucess = (details) => {
     console.log("Payment Sucessful", details);
-    navigate("/order-confirmation")
+    navigate("/order-confirmation");
   };
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto py-10 px-6 tracking-tighter">
@@ -177,7 +177,7 @@ const CheckOut = () => {
                 {/* Paypal Component */}
                 <PayPalButton
                   amount={100}
-                  onSucess={handlePaymentSucess}
+                  onSuccess={handlePaymentSucess}
                   onError={(err) => alert("Payment failed, Try again.")}
                 />
               </div>

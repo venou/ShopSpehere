@@ -189,7 +189,7 @@ const NewArrivals = () => {
                       {product.name}
                     </h4>
                     <p className="text-xl font-bold">
-                      ${product.price.toFixed(2)}
+                      ₹ {product.price.toFixed(2)}
                     </p>
                     <span className="inline-block mt-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       View Details →
