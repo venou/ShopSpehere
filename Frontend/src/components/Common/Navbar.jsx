@@ -23,7 +23,7 @@ const Navbar = () => {
       <nav className="container mx-auto flex items-center justify-between py-4 px-6">
         {/* Left */}
         <div>
-          <Link to={"/"} className="text-2xl font-medium">
+          <Link to={"/"} className=" md:text-2xl sm:text-xl font-medium">
             ShopSphere
           </Link>
         </div>
