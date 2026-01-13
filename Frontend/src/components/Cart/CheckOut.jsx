@@ -3,20 +3,32 @@ import { useNavigate } from "react-router-dom";
 const cart = {
   products: [
     {
+      id: 1,
       name: "Stylish Jacket",
       size: "M",
       color: "Black",
-      price: 120,
+      price: 2499,
+      quantity: 1,
       image: "https://picsum.photos/150?random=1",
     },
     {
+      id: 2,
       name: "Casual Sneakers",
       size: "42",
       color: "White",
-      price: 75,
+      price: 1850,
+      quantity: 1,
       image: "https://picsum.photos/150?random=2",
     },
   ],
+  shippingCharge: "Free",
+
+  get totalPrice() {
+    return this.products.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+  },
 };
 
 const CheckOut = () => {
@@ -36,10 +48,6 @@ const CheckOut = () => {
     phone: "",
   });
 
-  const handlePaymentSucess = (details) => {
-    console.log("Payment Sucessful", details);
-    navigate("/order-confirmation");
-  };
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto py-10 px-6 tracking-tighter">
       {/* Left Section */}
@@ -177,6 +185,42 @@ const CheckOut = () => {
             )}
           </div>
         </form>
+      </div>
+      {/* Right Section */}
+      <div className=" bg-gray-50 p-6 rounded-lg">
+        <h3 className=" text-lg mb-4">Order Summary</h3>
+        <div className="border-t py-4 mb-4">
+          {cart.products.map((product, index) => (
+            <div
+              key={index}
+              className="flex items-start justify-between py-2 border-b"
+            >
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-20 h-24 object-cover mr-4"
+              />
+              <div>
+                <h3 className="text-md">{product.name}</h3>
+                <p className="text-gray-500">Size: {product.size}</p>
+                <p className="text-gray-500">Color: {product.color}</p>
+              </div>
+              <p className="text-xl">₹ {product.price}</p>
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-between items-center text-lg mb-4">
+          <p>Subtotal</p>
+          <p>₹{cart.totalPrice?.toLocaleString()}</p>
+        </div>
+        <div className="flex justify-between items-center text-lg">
+          <p>Shipping</p>
+          <p>Free</p>
+        </div>
+        <div className="flex justify-between items-center text-lg mt-4 border-t pt-4">
+          <p>Total</p>
+          <p>{cart.totalPrice?.toLocaleString()}</p>
+        </div>
       </div>
     </div>
   );
