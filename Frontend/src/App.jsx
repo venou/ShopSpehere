@@ -13,6 +13,8 @@ import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import OrderDetailsPage from "./pages/OrderDetailsPage";
 import MyOrderPages from "./pages/MyOrderPages";
 import AdminLayout from "./components/Admin/AdminLayout";
+import AdminHomePage from "./pages/AdminHomePage";
+import UserManagement from "./components/Admin/UserManagement";
 const App = () => {
   return (
     <BrowserRouter>
@@ -20,24 +22,27 @@ const App = () => {
       <Routes>
         <Route path="/" element={<UserLayout />}>
           <Route index element={<Home />}></Route>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/register" element={<Register />}></Route>
-          <Route path="/profile" element={<Profile />}></Route>
+          <Route path="login" element={<Login />}></Route>
+          <Route path="register" element={<Register />}></Route>
+          <Route path="profile" element={<Profile />}></Route>
           <Route
             path="/collection/:collection"
             element={<CollectionPage />}
           ></Route>
           <Route path="/product/:id" element={<ProductsDetails />}></Route>
-          <Route path="/checkout" element={<CheckOut />}></Route>
+          <Route path="checkout" element={<CheckOut />}></Route>
           <Route
             path="/order-confirmation"
             element={<OrderConfirmationPage />}
           ></Route>
           <Route path="/order/:id" element={<OrderDetailsPage />}></Route>
-          <Route path="/my-orders" element={<MyOrderPages />}></Route>
+          <Route path="my-orders" element={<MyOrderPages />}></Route>
         </Route>
         {/* Admin Layout */}
-        <Route path="/admin" element={<AdminLayout />}></Route>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminHomePage />}></Route>
+          <Route path="users" element={<UserManagement />}></Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );
