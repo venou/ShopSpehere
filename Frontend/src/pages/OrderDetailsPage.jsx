@@ -129,7 +129,7 @@ const OrderDetailsPage = () => {
               </table>
             </div>
             {/* Back to orders List */}
-            <Link to="my-orders" className="text-blue-500 hover:underline">
+            <Link to="/my-orders" className="text-blue-500 hover:underline">
               Back to my orders
             </Link>
           </div>
