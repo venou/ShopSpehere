@@ -16,10 +16,10 @@ const EditProductPage = () => {
     gender: "",
     images: [
       {
-        url: "https://picsum.photos.150?random=1",
+        url: "https://picsum.photos/150?random=1",
       },
       {
-        url: "https://picsum.photos.150?random=2",
+        url: "https://picsum.photos/150?random=2",
       },
     ],
   });
@@ -30,10 +30,18 @@ const EditProductPage = () => {
       [name]: value,
     }));
   };
+  const hadnleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    console.log(file);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(productData);
+  };
   return (
     <div className="max-w-5xl p-6 mx-auto shadow-md rounded-md">
       <h2 className="text-3xl font-bold mb-6">Edit Product</h2>
-      <form>
+      <form onSubmit={handleSubmit}>
         {/* Name */}
         <div className="mb-6">
           <label className="block font-semibold mb-2">Product Name</label>
@@ -52,6 +60,7 @@ const EditProductPage = () => {
           <textarea
             name="description"
             value={productData.description}
+            onChange={handleChange}
             className="w-full border border-gray-300 rounded-md p-2"
             rows={4}
             required
@@ -108,6 +117,50 @@ const EditProductPage = () => {
             className="w-full border border-gray-300 p-2 rounded-md"
           />
         </div>
+        {/* Colors */}
+        <div className="mb-6">
+          <label className="block font-semibold mb-2">
+            Colors (comma-seperated)
+          </label>
+          <input
+            type="text"
+            name="color"
+            value={productData.color.join(", ")}
+            onChange={(e) =>
+              setProductData({
+                ...productData,
+                color: e.target.value.split(", ").map((color) => color.trim()),
+              })
+            }
+            className="w-full border border-gray-300 p-2 rounded-md"
+          />
+        </div>
+        {/* Image Upload */}
+        <div className="mb-6">
+          <label className="block font-semibold mb-2">Upload Image</label>
+          <input
+            type="file"
+            className="bg-gray-100 cursor-pointer p-2 rounded"
+            onChange={hadnleImageUpload}
+          />
+          <div className="flex gap-4 mt-4">
+            {productData.images.map((image, index) => (
+              <div key={index}>
+                <img
+                  src={image.url}
+                  alt={image.altText || "Product Image"}
+                  className="w-20 h-20 object-cover rounded-md shadow-md"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+        <button
+          className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition-colors font-semibold"
+          type="submit"
+        >
+          Update Button
+        </button>
       </form>
     </div>
   );
