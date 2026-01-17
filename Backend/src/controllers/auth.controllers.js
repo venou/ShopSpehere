@@ -6,77 +6,88 @@ import gentoken from "../utils/token.js";
 export const signUp = async (req, res) => {
   try {
     const { name, email, password, mobile } = req.body;
-    let existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res
-        .status(httpstatus.FOUND)
-        .json({ message: "User already exist" });
-    }
-    if (password.length < 8) {
-      return res
-        .status(httpstatus.BAD_REQUEST)
-        .json({ message: "Password must be at least 8 characters" });
-    }
-    if (mobile.length < 10) {
-      return res
-        .status(httpstatus.BAD_REQUEST)
-        .json({ message: "Number must be atleast 10 digits" });
-    }
-    const hashedPasswords = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({
+    if (!password || password.length < 8) {
+      return res.status(400).json({ message: "Password too short" });
+    }
+
+    if (!mobile || String(mobile).length < 10) {
+      return res.status(400).json({ message: "Invalid mobile number" });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
       name,
       email,
       mobile,
-      password: hashedPasswords,
+      password: hashedPassword,
     });
 
-    const token = await gentoken(newUser._id);
+    const token = gentoken(user._id);
+
     res.cookie("token", token, {
-      secure: false,
-      sameSite: "Strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(httpstatus.OK).json(newUser);
-  } catch (error) {
-    res.json({ message: `Something went wrong ${error}` });
+    return res.status(201).json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Signup failed" });
   }
 };
+
 
 export const signIn = async (req, res) => {
   const { email, password } = req.body;
+
   if (!email || !password) {
-    return res.status(400).json({ message: "Please Provide" });
+    return res.status(400).json({ message: "Email and password required" });
   }
+
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(httpstatus.NOT_FOUND)
-        .json({ message: "User Not Found" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res
-        .status(httpstatus.UNAUTHORIZED)
-        .json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = await gentoken(user._id);
+    const token = gentoken(user._id);
+
     res.cookie("token", token, {
-      secure: false,
-      sameSite: "Strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(httpstatus.OK).json(user);
-  } catch (error) {
-    return res.status(500).json(`Sign In error ${error}`);
+    return res.status(200).json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Signin failed" });
   }
 };
+
 
 export const signOut = async (req, res) => {
   try {
