@@ -1,11 +1,11 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import httpstatus from "http-status";
-import crypto from "crypto";
+import gentoken from "../utils/token.js";
 
 export const signUp = async (req, res) => {
   try {
-    const { firstname, lastname, email, password, mobile, username } = req.body;
+    const { name, email, password, mobile } = req.body;
     let existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
@@ -17,19 +17,29 @@ export const signUp = async (req, res) => {
         .status(httpstatus.BAD_REQUEST)
         .json({ message: "Password must be at least 8 characters" });
     }
-
+    if (mobile.length < 10) {
+      return res
+        .status(httpstatus.BAD_REQUEST)
+        .json({ message: "Number must be atleast 10 digits" });
+    }
     const hashedPasswords = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
-      firstname,
-      lastname,
+      name,
       email,
       mobile,
-      username,
       password: hashedPasswords,
     });
-    await newUser.save();
-    res.status(httpstatus.CREATED).json({ message: "User Created" });
+
+    const token = await gentoken(newUser._id);
+    res.cookie("token", token, {
+      secure: false,
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+
+    return res.status(httpstatus.OK).json(newUser);
   } catch (error) {
     res.json({ message: `Something went wrong ${error}` });
   }
@@ -54,14 +64,25 @@ export const signIn = async (req, res) => {
         .json({ message: "Invalid credentials" });
     }
 
-    const token = crypto.randomBytes(20).toString("hex");
-    user.token = token;
-    await user.save();
+    const token = await gentoken(user._id);
+    res.cookie("token", token, {
+      secure: false,
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
 
-    return res.status(httpstatus.OK).json({ token });
+    return res.status(httpstatus.OK).json(user);
   } catch (error) {
-    return res
-      .status(httpstatus.INTERNAL_SERVER_ERROR)
-      .json({ message: "Internal server error" });
+    return res.status(500).json(`Sign In error ${error}`);
+  }
+};
+
+export const signOut = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    return res.status(httpstatus.OK).json({ message: "Logout Sucessfully" });
+  } catch (error) {
+    return res.status(500).json(`logout error ${error}`);
   }
 };
