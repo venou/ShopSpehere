@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import userRoutes from "./routes/users.routes.js";
-import profileRoutes from "./routes/profile.routes.js";
 import cookieParser from "cookie-parser";
 dotenv.config();
 
@@ -17,7 +16,6 @@ app.use(
 );
 app.use(cookieParser());
 app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/profile", profileRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to ShopSphere API");
