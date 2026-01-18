@@ -38,17 +38,12 @@ export const signUp = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(201).json({
-      id: user._id,
-      name: user.name,
-      email: user.email,
-    });
+    return res.status(201).json(user);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Signup failed" });
   }
 };
-
 
 export const signIn = async (req, res) => {
   const { email, password } = req.body;
@@ -58,7 +53,7 @@ export const signIn = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -68,26 +63,30 @@ export const signIn = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = gentoken(user._id);
+    const token = await gentoken(user._id);
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
-      sameSite: "Lax",
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
     });
 
     return res.status(200).json({
-      id: user._id,
-      name: user.name,
-      email: user.email,
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Signin failed" });
   }
 };
-
 
 export const signOut = async (req, res) => {
   try {
