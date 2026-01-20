@@ -54,3 +54,20 @@ export const createProducts = async (req, res) => {
     res.status(500).send({ message: "Server Error" });
   }
 };
+
+export const deleteProduct = async (req, res) => {
+  try {
+    // Find the product by ID
+    const product = await Products.findById(req.params.id);
+    if (product) {
+      // Remove the product from DB
+      await product.deleteOne();
+      res.json({ message: "Product Removed" });
+    } else {
+      res.status(httpstatus.NOT_FOUND).json({ message: "Product not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(httpstatus.INTERNAL_SERVER_ERROR).send("Server Error");
+  }
+};
