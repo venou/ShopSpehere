@@ -1,4 +1,3 @@
-import Product from "../models/product.model.js";
 import Products from "../models/product.model.js";
 import httpstatus from "http-status";
 
