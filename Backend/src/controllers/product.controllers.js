@@ -1,3 +1,4 @@
+import Product from "../models/product.model.js";
 import Products from "../models/product.model.js";
 import httpstatus from "http-status";
 
@@ -69,5 +70,101 @@ export const deleteProduct = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(httpstatus.INTERNAL_SERVER_ERROR).send("Server Error");
+  }
+};
+
+export const getProducts = async (req, res) => {
+  try {
+    const {
+      collection,
+      size,
+      color,
+      gender,
+      minPrice,
+      maxPrice,
+      sortBy,
+      search,
+      category,
+      material,
+      brand,
+      limit,
+    } = req.query;
+    let query = {};
+    // Filter Logic
+    if (collection && collection.toLocaleLowerCase() !== "all") {
+      query.collections = collection;
+    }
+    if (category && category.toLocaleLowerCase() !== "all") {
+      query.category = category;
+    }
+    if (material) {
+      query.material = { $in: material.split(", ") };
+    }
+    if (brand) {
+      query.brand = { $in: brand.split(", ") };
+    }
+    if (material) {
+      query.material = { $in: material.split(", ") };
+    }
+    if (size) {
+      query.sizes = { $in: size.split(", ") };
+    }
+    if (color) {
+      query.color = { $in: [color] };
+    }
+    if (gender) {
+      query.gender = gender;
+    }
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Sort Logic
+    let sort = {};
+    if (sortBy) {
+      switch (sortBy) {
+        case "priceAsc":
+          sort = { price: 1 };
+          break;
+        case "priceDesc":
+          sort = { price: -1 };
+          break;
+        case "popularity":
+          sort = { rating: -1 };
+          break;
+        default:
+          break;
+      }
+    }
+
+    // Fetch Products and apply sorting and limit
+    let products = await Products.find(query)
+      .sort(sort)
+      .limit(Number(limit) || 0);
+    res.json(products);
+  } catch (error) {
+    console.log(error);
+    res.status(httpstatus.INTERNAL_SERVER_ERROR).send("Server Error");
+  }
+};
+
+export const getProductById = async (req, res) => {
+  try {
+    const product = await Products.findById(req.params.id);
+    if (product) {
+      res.json(product);
+    } else {
+      res.status(httpstatus.NOT_FOUND).json({ message: "Product not found" });
+    }
+  } catch (error) {
+    res.status(httpstatus.INTERNAL_SERVER_ERROR);
   }
 };
