@@ -182,8 +182,41 @@ export const similarProduct = async (req, res) => {
       _id: { $ne: id },
       gender: product.gender,
       category: product.category,
-    });
+    }).limit(4);
+    res.json(similarProducts);
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    res.status(httpstatus.INTERNAL_SERVER_ERROR).send("Server Error");
+  }
+};
+
+export const topRatedProduct = async (req, res) => {
+  try {
+    const product = await Products.findOne().sort({ rating: -1 }).limit(1);
+
+    if (!product) {
+      return res
+        .status(httpstatus.NOT_FOUND)
+        .json({ message: "No product found" });
+    }
+
+    res.status(httpstatus.OK).json(product);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(httpstatus.INTERNAL_SERVER_ERROR)
+      .json({ message: "Server error" });
+  }
+};
+
+export const newArrivals = async (req, res) => {
+  try {
+    const product = await Products.find().sort({ createdAt: -1 }).limit(8);
+    res.status(httpstatus.OK).json(product);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(httpstatus.INTERNAL_SERVER_ERROR)
+      .json({ message: "Server Error" });
   }
 };
