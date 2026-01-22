@@ -168,3 +168,22 @@ export const getProductById = async (req, res) => {
     res.status(httpstatus.INTERNAL_SERVER_ERROR);
   }
 };
+
+export const similarProduct = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const product = await Products.findById(id);
+    if (!product) {
+      return res
+        .status(httpstatus.NOT_FOUND)
+        .json({ message: "Product not Found" });
+    }
+    const similarProducts = await Products.find({
+      _id: { $ne: id },
+      gender: product.gender,
+      category: product.category,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
