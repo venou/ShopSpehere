@@ -161,3 +161,20 @@ export const deleteCart = async (req, res) => {
       .json({ message: "server error" });
   }
 };
+
+export const getProductCart = async (req, res) => {
+  const { userId, guestId } = req.query;
+  try {
+    const cart = await getCart(userId, guestId);
+    if (cart) {
+      res.json(cart);
+    } else {
+      res.status(httpstatus.NOT_FOUND).json({ message: "Cart not Found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res
+      .status(httpstatus.INTERNAL_SERVER_ERROR)
+      .json({ message: "Server Error" });
+  }
+};
