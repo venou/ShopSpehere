@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/users.routes.js";
 import productRoutes from "./routes/products.routes.js";
 import cookieParser from "cookie-parser";
+import cartRoutes from "./routes/cart.routes.js";
 dotenv.config();
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(
 app.use(cookieParser());
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/products", productRoutes);
+app.use("/api/v1/cart", cartRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to ShopSphere API");
