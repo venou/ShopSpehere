@@ -107,7 +107,8 @@ export const updateQuantity = async (req, res) => {
         cart.products.splice(productIndex, 1); // Remove product if quantity is 0
       }
       cart.totalPrice = cart.products.reduce(
-        (acc, item) => acc + item.price * item.quantity, 0
+        (acc, item) => acc + item.price * item.quantity,
+        0,
       );
       await cart.save();
       return res.status(httpstatus.OK).json(cart);
@@ -117,6 +118,46 @@ export const updateQuantity = async (req, res) => {
         .json({ message: "Product not found in cart" });
     }
   } catch (error) {
-    console.error(error );
+    console.error(error);
+    res
+      .status(httpstatus.INTERNAL_SERVER_ERROR)
+      .json({ message: "server error" });
+  }
+};
+
+export const deleteCart = async (req, res) => {
+  const { productId, size, color, userId, guestId } = req.body;
+  try {
+    let cart = await getCart(userId, guestId);
+    if (!cart) {
+      return res
+        .status(httpstatus.NOT_FOUND)
+        .json({ message: "cart not found" });
+    }
+    const productIndex = cart.products.findIndex(
+      (p) =>
+        p.productId.toString() === productId &&
+        p.size === size &&
+        p.color === color,
+    );
+    if (productIndex > -1) {
+      cart.products.splice(productIndex, 1);
+
+      cart.totalPrice = cart.products.reduce(
+        (acc, item) => acc + item.price * item.quantity,
+        0,
+      );
+      await cart.save();
+      return res.status(httpstatus.OK).json(cart);
+    } else {
+      return res
+        .status(httpstatus.NOT_FOUND)
+        .json({ message: "Product not Found in cart" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(httpstatus.INTERNAL_SERVER_ERROR)
+      .json({ message: "server error" });
   }
 };
