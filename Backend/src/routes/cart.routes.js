@@ -3,6 +3,7 @@ import {
   cart,
   deleteCart,
   getProductCart,
+  mergeGuestIntoUser,
   updateQuantity,
 } from "../controllers/cart.controllers.js";
 
@@ -12,5 +13,5 @@ router.post("/", cart);
 router.put("/", updateQuantity);
 router.delete("/", deleteCart);
 router.get("/", getProductCart);
-
+router.post("/merge", mergeGuestIntoUser);
 export default router;

@@ -178,3 +178,64 @@ export const getProductCart = async (req, res) => {
       .json({ message: "Server Error" });
   }
 };
+
+export const mergeGuestIntoUser = async (req, res) => {
+  const { guestId } = req.body;
+  try {
+    const guestCart = await Cart.findOne({ guestId });
+    const userCart = await Cart.findOne({ user: req.user._id });
+    if (guestCart) {
+      if (guestCart.products.length === 0) {
+        return res
+          .status(httpstatus.NOT_FOUND)
+          .json({ message: "Guest cart is empty" });
+      }
+      if (userCart) {
+        guestCart.products.forEach((guestItem) => {
+          const productIndex = userCart.products.findIndex(
+            (item) =>
+              item.productId.toString() === guestItem.productId.toString() &&
+              item.size === guestItem.size &&
+              item.color === guestItem.color,
+          );
+          if (productIndex > -1) {
+            userCart.products[productIndex].quantity += guestItem.quantity;
+          } else {
+            userCart.products.push(guestItem);
+          }
+        });
+        userCart.totalPrice = userCart.products.reduce(
+          (acc, item) => acc + item.price * item.quantity,
+          0,
+        );
+        await userCart.save();
+        // Remove the guest cart after merging
+        try {
+          await Cart.findOneAndDelete({ guestId });
+        } catch (error) {
+          console.error("Error deleting guest cart:", error);
+        }
+        res.status(httpstatus.OK).json(userCart);
+      } else {
+        // if the user has no existing cart, assign the guest cart to the user
+        guestCart.user = req.user._id;
+        guestCart.guestId = undefined;
+        await guestCart.save();
+        res.status(httpstatus.OK).json(guestCart);
+      }
+    } else {
+      if (userCart) {
+        // Guest cart has been already merged , return user cart
+        return res.status(httpstatus.OK).json(userCart);
+      }
+      return res
+        .status(httpstatus.NOT_FOUND)
+        .json({ message: "Guest cart not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res
+      .status(httpstatus.INTERNAL_SERVER_ERROR)
+      .json({ message: "Server Error" });
+  }
+};
