@@ -183,7 +183,7 @@ export const mergeGuestIntoUser = async (req, res) => {
   const { guestId } = req.body;
   try {
     const guestCart = await Cart.findOne({ guestId });
-    const userCart = await Cart.findOne({ user: req.user._id });
+    const userCart = await Cart.findOne({ user: req.user?._id });
     if (guestCart) {
       if (guestCart.products.length === 0) {
         return res
