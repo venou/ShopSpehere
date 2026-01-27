@@ -62,3 +62,50 @@ export const updateCheckout = async (req, res) => {
       .json({ message: "Server Error" });
   }
 };
+
+export const finalizeCheckout = async (req, res) => {
+  try {
+    const checkout = await CheckOut.findById(req.params.id);
+    if (!checkout) {
+      return res
+        .status(httpsstatus.NOT_FOUND)
+        .json({ message: "checkout not found" });
+    }
+
+    if (checkout.isPaid && !checkout.isFinalized) {
+      // create final order based on the checkout details
+      const finalOrder = await Order.create({
+        user: checkout.user,
+        orderItems: checkout.orderItems,
+        shippingAddress: checkout.shippingAddress,
+        paymentMethod: checkout.paymentMethod,
+        totalPrice: checkout.totalPrice,
+        isPaid: true,
+        paidAt: checkout.paidAt,
+        isDelivered: false,
+        paymentStatus: "paid",
+        paymentDetails: checkout.paymentDetails,
+      });
+      //   Mark the checkout as finalize
+      checkout.isFinalized = true;
+      checkout.isFinalized = Date.now();
+      await checkout.save();
+      //   Delete the cart with associated user
+      await Cart.findOneAndDelete({ user: checkout.user });
+      res.status(httpsstatus.CREATED).json(finalOrder);
+    } else if (checkout.isFinalized) {
+      res
+        .status(httpsstatus.BAD_REQUEST)
+        .json({ MediaSession: "checkout already finalized" });
+    } else {
+      res
+        .status(httpsstatus.BAD_REQUEST)
+        .json({ MediaSession: "checkout is not paid" });
+    }
+  } catch (error) {
+    console.error(error);
+    res
+      .status(httpsstatus.INTERNAL_SERVER_ERROR)
+      .json({ message: "Server Error" });
+  }
+};
