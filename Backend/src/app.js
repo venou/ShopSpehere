@@ -1,6 +1,9 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import userRoutes from "./routes/users.routes.js";
 import productRoutes from "./routes/products.routes.js";
 import cookieParser from "cookie-parser";
@@ -8,8 +11,6 @@ import cartRoutes from "./routes/cart.routes.js";
 import checkoutRoutes from "./routes/checkout.routes.js";
 import orderRoutes from "./routes/order.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
-
-dotenv.config();
 
 const app = express();
 

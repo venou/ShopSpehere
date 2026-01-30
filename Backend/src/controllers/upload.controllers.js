@@ -1,5 +1,5 @@
 import httpStatus from "http-status";
-import { uploadToCloudinary } from "../utils/cloudinary.js";
+import { uploadToCloudinary } from "../utils/uploadToCloudinary.js";
 
 export const uploadImage = async (req, res) => {
   try {
@@ -9,14 +9,16 @@ export const uploadImage = async (req, res) => {
         .json({ message: "No file uploaded" });
     }
 
-    const result = await uploadToCloudinary(req.file.buffer, "orders");
+    const result = await uploadToCloudinary(req.file.buffer, "uploads");
 
-    res.status(httpStatus.OK).json({
+    return res.status(httpStatus.OK).json({
       imageUrl: result.secure_url,
     });
   } catch (error) {
-    res
-      .status(httpStatus.INTERNAL_SERVER_ERROR)
-      .json({ message: "Server Error" });
+    console.error("UPLOAD ERROR ->", error);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      message: "Server Error",
+      error: error.message,
+    });
   }
 };
