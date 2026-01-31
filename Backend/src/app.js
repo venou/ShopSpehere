@@ -8,6 +8,7 @@ import checkoutRoutes from "./routes/checkout.routes.js";
 import orderRoutes from "./routes/order.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
 import subscriberRoutes from "./routes/subscriber.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 const app = express();
 
@@ -26,6 +27,9 @@ app.use("/api/v1/checkout", checkoutRoutes);
 app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/upload", uploadRoutes);
 app.use("/api/v1", subscriberRoutes);
+
+// Admin 
+app.use("/api/v1/admin/users", adminRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to ShopSphere API");
