@@ -17,4 +17,12 @@ const isAuth = (req, res, next) => {
   }
 };
 
-export default isAuth;
+const isAdmin = (req, res, next) => {
+  if (req.user && req.user.role === "admin") {
+    next();
+  } else {
+    res.status(403).json({ message: "Not Authorized as an admin" });
+  }
+};
+
+export { isAdmin, isAuth };

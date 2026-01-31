@@ -1,5 +1,5 @@
 import { Router } from "express";
-import isAuth from "../middlewares/isAuth.js";
+import { isAuth } from "../middlewares/auth.js";
 import {
   getMyProductsController,
   orderDetailsController,

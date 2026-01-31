@@ -1,4 +1,4 @@
-import isAuth from "../middlewares/isAuth.js";
+import { isAuth } from "../middlewares/auth.js";
 import {
   createProducts,
   deleteProduct,

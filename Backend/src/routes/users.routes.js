@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { signIn, signUp, signOut } from "../controllers/auth.controllers.js";
-import isAuth from "../middlewares/isAuth.js";
+import { isAuth } from "../middlewares/auth.js";
 import { getCurrentProfile } from "../controllers/profile.controllers.js";
 
 const router = Router();

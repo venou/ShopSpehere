@@ -6,7 +6,7 @@ import {
   mergeGuestIntoUser,
   updateQuantity,
 } from "../controllers/cart.controllers.js";
-import isAuth from "../middlewares/isAuth.js";
+import {isAuth} from "../middlewares/auth.js";
 const router = Router();
 
 router.post("/", cart);
