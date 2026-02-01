@@ -35,3 +35,20 @@ export const updateOrderStatus = async (req, res) => {
       .json({ message: "Server Error" });
   }
 };
+
+export const deleteOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (order) {
+      await order.deleteOne();
+      res.json({ message: "Order Removed" });
+    } else {
+      res.status(httpstatus.NOT_FOUND).json({ message: "Order Not Found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res
+      .status(httpstatus.INTERNAL_SERVER_ERROR)
+      .json({ message: "Server Error" });
+  }
+};
