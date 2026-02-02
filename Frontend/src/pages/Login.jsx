@@ -3,15 +3,17 @@ import { Link } from "react-router-dom";
 import login from "../assets/login.webp";
 import { HiEye } from "react-icons/hi2";
 import { HiEyeOff } from "react-icons/hi";
-
+import { loginUser } from "../redux/slices/authSlice";
+import { useDispatch } from "react-redux";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("User login:", { email, password });
+    dispatch(loginUser({email, password}))
   };
 
   return (

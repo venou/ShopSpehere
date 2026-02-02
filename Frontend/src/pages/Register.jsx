@@ -3,17 +3,18 @@ import { Link } from "react-router-dom";
 import regimg from "../assets/Register.webp";
 import { HiEye } from "react-icons/hi2";
 import { HiEyeOff } from "react-icons/hi";
-
+import { registerUser } from "../redux/slices/authSlice";
+import { useDispatch } from "react-redux";
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
+  const dispatch = useDispatch();
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("User Rigistered:", { email, password, mobile, name });
+    dispatch(registerUser({ name, email, password, mobile }));
   };
 
   return (
