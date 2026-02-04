@@ -11,7 +11,7 @@ export const createCheckout = createAsyncThunk(
         checkoutdata,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem(userToken)}`,
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
         },
       );
@@ -47,4 +47,4 @@ const checkoutSlice = createSlice({
   },
 });
 
-export default checkoutSlice.reducer
+export default checkoutSlice.reducer;
