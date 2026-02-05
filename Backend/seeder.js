@@ -20,14 +20,14 @@ const seedData = async () => {
     await User.deleteMany();
     await Cart.deleteMany();
 
-    // 🔐 HASH PASSWORD HERE
+    //  HASH PASSWORD HERE
     const hashedPassword = await bcrypt.hash("123456", 10);
 
     // Create a default admin user
     const createUser = await User.create({
       name: "Admin User",
       email: "admin@example.com",
-      password: hashedPassword, // ✅ FIXED
+      password: hashedPassword, 
       role: "admin",
       mobile: "987654321",
     });
@@ -45,7 +45,7 @@ const seedData = async () => {
     console.log("✅ Data seeded successfully");
     process.exit();
   } catch (error) {
-    console.error("❌ Error seeding data:", error);
+    console.error("Error seeding data:", error);
     process.exit(1);
   }
 };

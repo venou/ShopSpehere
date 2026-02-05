@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { Link } from "react-router-dom";
-
+import axios from "axios";
 const NewArrivals = () => {
   const scrollContainerRef = useRef(null);
   const [showLeftButton, setShowLeftButton] = useState(false);
@@ -9,58 +9,29 @@ const NewArrivals = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const [newArrivals, setNewArrivals] = useState([]);
 
-  const newArrivals = [
-    {
-      _id: "1",
-      name: "Premium Leather Jacket",
-      price: 199.99,
-      images: [{ url: "https://picsum.photos/500/500?random=1" }],
-    },
-    {
-      _id: "2",
-      name: "Wool Blend Coat",
-      price: 159.99,
-      images: [{ url: "https://picsum.photos/500/500?random=2" }],
-    },
-    {
-      _id: "3",
-      name: "Denim Overshirt",
-      price: 89.99,
-      images: [{ url: "https://picsum.photos/500/500?random=3" }],
-    },
-    {
-      _id: "4",
-      name: "Bomber Jacket",
-      price: 129.99,
-      images: [{ url: "https://picsum.photos/500/500?random=4" }],
-    },
-    {
-      _id: "5",
-      name: "Trench Coat",
-      price: 249.99,
-      images: [{ url: "https://picsum.photos/500/500?random=5" }],
-    },
-    {
-      _id: "6",
-      name: "Lightweight Windbreaker",
-      price: 79.99,
-      images: [{ url: "https://picsum.photos/500/500?random=6" }],
-    },
-    {
-      _id: "7",
-      name: "Quilted Gilet",
-      price: 99.99,
-      images: [{ url: "https://picsum.photos/500/500?random=7" }],
-    },
-  ];
+  useEffect(() => {
+    const fetchNewArrivals = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/products/new-arrivals`,
+        );
+        setNewArrivals(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchNewArrivals();
+  }, []);
 
   const checkScrollButtons = () => {
     const container = scrollContainerRef.current;
     if (container) {
       setShowLeftButton(container.scrollLeft > 0);
       setShowRightButton(
-        container.scrollLeft + container.clientWidth < container.scrollWidth - 1
+        container.scrollLeft + container.clientWidth <
+          container.scrollWidth - 1,
       );
     }
   };
@@ -113,7 +84,7 @@ const NewArrivals = () => {
         container.removeEventListener("scroll", checkScrollButtons);
       };
     }
-  }, []);
+  }, [newArrivals]);
 
   return (
     <section className="py-8 px-4 md:px-6 lg:px-8 bg-gray-50">
