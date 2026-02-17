@@ -49,7 +49,6 @@ const Home = () => {
       ) : (
         <p className="text-center">Loading best seller products ...</p>
       )}
-      <ProductsDetails />
 
       <div className="container mx-auto">
         <h2 className="text-3xl text-center font-bold mb-4">

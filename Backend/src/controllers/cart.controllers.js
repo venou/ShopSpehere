@@ -41,7 +41,7 @@ export const cart = async (req, res) => {
         cart.products.push({
           productId,
           name: product.name,
-          image: product.images,
+          image: product.images[0].url,
           price: product.price,
           size,
           color,

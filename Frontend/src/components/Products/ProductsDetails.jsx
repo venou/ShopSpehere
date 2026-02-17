@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import ProductGrid from "./ProductGrid";
 import { useParams } from "react-router-dom";
@@ -23,11 +23,12 @@ const ProductsDetails = ({ productId }) => {
   const productFetchId = productId || id;
 
   useEffect(() => {
-    if (productFetchId) {
-      dispatch(fetchProductDetails(productFetchId));
-      dispatch(fetchSimilarProducts({ id: productFetchId }));
-    }
-  }, [dispatch, productFetchId]);
+    if (!productFetchId) return;
+    // avoid refetching if the requested product is already loaded in state
+    if (selectedProduct && selectedProduct._id === productFetchId) return;
+    dispatch(fetchProductDetails(productFetchId));
+    dispatch(fetchSimilarProducts({ id: productFetchId }));
+  }, [dispatch, productFetchId, selectedProduct]);
 
   useEffect(() => {
     if (selectedProduct?.images?.length > 0) {
